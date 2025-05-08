@@ -2,8 +2,10 @@ package rnd.dev.s3storagelearning.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 import rnd.dev.s3storagelearning.record.bucket.BucketRequest;
 import rnd.dev.s3storagelearning.record.bucket.BucketResponse;
+import rnd.dev.s3storagelearning.record.file.FileResponse;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
@@ -52,6 +54,24 @@ public class S3ServiceImpl implements S3Service {
                 .status(BucketResponse.Status.DELETED)
                 .build();
         return bucketResponse;
+
+    }
+
+    @Override
+    public FileResponse addFile(MultipartFile multipartFile, String bucketName) {
+        // Build the request
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(multipartFile.getOriginalFilename())
+                .contentType(multipartFile.getContentType())
+                .build();
+
+        FileResponse fileResponse = FileResponse.builder()
+                .bucketName(putObjectRequest.bucket())
+                .fileName(putObjectRequest.key())
+                .status(FileResponse.Status.CREATED)
+                .build();
+        return fileResponse;
 
     }
 }
