@@ -8,8 +8,9 @@ This is a simple Spring Boot project to **learn how to work with AWS S3 APIs** u
 
 ## 📦 What is LocalStack?
 
-**LocalStack** is a tool that allows you to run **fake AWS services** (like S3, SNS, SQS, etc.) on your local machine.
+LocalStack is a tool that allows you to run **fake AWS services** (like S3, SNS, SQS, etc.) on your local machine.
 This helps you **test your cloud code without paying AWS** or needing internet access.
+
 ---
 
 ## ✅ What This Project Does
@@ -32,7 +33,7 @@ This app provides REST APIs to:
 ### 1. Clone the project
 
 ```bash
-git clone https://your-repo-url
+git clone https://github.com/Toushika/s3-storage-rnd.git
 cd s3-storage-rnd
 ```
 
