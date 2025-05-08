@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import rnd.dev.s3storagelearning.record.bucket.BucketRequest;
 import rnd.dev.s3storagelearning.record.bucket.BucketResponse;
+import rnd.dev.s3storagelearning.record.file.DeleteFileRequest;
+import rnd.dev.s3storagelearning.record.file.FileRequest;
 import rnd.dev.s3storagelearning.record.file.FileResponse;
 import rnd.dev.s3storagelearning.service.S3Service;
 
@@ -38,6 +40,16 @@ public class S3Controller {
     @PostMapping("/add/file")
     public FileResponse addFile(@RequestParam("file") MultipartFile multipartFile, @RequestParam("bucketName") String bucketName) {
         return s3Service.addFile(multipartFile, bucketName);
+    }
+
+    @PostMapping("/view/files")
+    public List<String> viewFiles(@RequestBody FileRequest fileRequest) {
+        return s3Service.viewFiles(fileRequest);
+    }
+
+    @DeleteMapping("/delete/file")
+    public FileResponse deleteFile(@RequestBody DeleteFileRequest deleteFileRequest) {
+        return s3Service.deleteFile(deleteFileRequest);
     }
 
 }
