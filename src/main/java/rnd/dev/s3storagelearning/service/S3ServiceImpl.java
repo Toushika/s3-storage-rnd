@@ -1,5 +1,6 @@
 package rnd.dev.s3storagelearning.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class S3ServiceImpl implements S3Service {
     private final S3Client s3Client;
@@ -26,6 +28,7 @@ public class S3ServiceImpl implements S3Service {
 
     @Override
     public BucketResponse addBucket(@RequestBody BucketRequest bucketRequest) {
+        log.info("S3ServiceImpl :: addBucket :: bucketRequest :: {}", bucketRequest);
         CreateBucketResponse bucket = s3Client.createBucket(CreateBucketRequest.builder()
                 .bucket(bucketRequest.getBucketName())
                 .build());
@@ -49,6 +52,7 @@ public class S3ServiceImpl implements S3Service {
 
     @Override
     public BucketResponse deleteBucket(@RequestBody BucketRequest bucketRequest) {
+        log.info("S3ServiceImpl :: deleteBucket :: bucketRequest :: {}", bucketRequest);
         DeleteBucketResponse bucket = s3Client.deleteBucket(DeleteBucketRequest.builder()
                 .bucket(bucketRequest.getBucketName())
                 .build());
@@ -63,6 +67,7 @@ public class S3ServiceImpl implements S3Service {
 
     @Override
     public FileResponse addFile(MultipartFile multipartFile, String bucketName) {
+        log.info("S3ServiceImpl :: addFile :: bucketName :: {}", bucketName);
         // Build the request
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -98,6 +103,7 @@ public class S3ServiceImpl implements S3Service {
 
     @Override
     public FileResponse deleteFile(DeleteFileRequest fileRequest) {
+        log.info("S3ServiceImpl :: addFile :: fileRequest :: bucketName:: {} :: fileName :: {}", fileRequest.getBucketName(), fileRequest.getFileName());
         DeleteObjectResponse deleteObjectResponse = s3Client.deleteObject(DeleteObjectRequest.builder()
                 .bucket(fileRequest.getBucketName())
                 .key(fileRequest.getFileName())
