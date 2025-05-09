@@ -4,114 +4,93 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
-import rnd.dev.s3storagelearning.record.bucket.BucketRequest;
-import rnd.dev.s3storagelearning.record.bucket.BucketResponse;
-import rnd.dev.s3storagelearning.record.file.DeleteFileRequest;
-import rnd.dev.s3storagelearning.record.file.FileRequest;
-import rnd.dev.s3storagelearning.record.file.FileResponse;
+import rnd.dev.s3storagelearning.constant.enums.BucketStatus;
+import rnd.dev.s3storagelearning.constant.enums.FileStatus;
+import rnd.dev.s3storagelearning.record.request.CreateBucketRequest;
+import rnd.dev.s3storagelearning.record.request.DeleteBucketRequest;
+import rnd.dev.s3storagelearning.record.request.DeleteFileRequest;
+import rnd.dev.s3storagelearning.record.request.FileRequest;
+import rnd.dev.s3storagelearning.record.response.CreateBucketResponse;
+import rnd.dev.s3storagelearning.record.response.DeleteBucketResponse;
+import rnd.dev.s3storagelearning.record.response.FileResponse;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class S3ServiceImpl implements S3Service {
-    private final S3Client s3Client;
+public class S3ServiceImpl extends AbstractS3Service implements S3Service {
 
     public S3ServiceImpl(S3Client s3Client) {
-        this.s3Client = s3Client;
+        super(s3Client);
     }
 
     @Override
-    public BucketResponse addBucket(@RequestBody BucketRequest bucketRequest) {
+    public CreateBucketResponse addBucket(@RequestBody CreateBucketRequest bucketRequest) {
         log.info("S3ServiceImpl :: addBucket :: bucketRequest :: {}", bucketRequest);
-        CreateBucketResponse bucket = s3Client.createBucket(CreateBucketRequest.builder()
-                .bucket(bucketRequest.getBucketName())
-                .build());
-        BucketResponse bucketResponse = BucketResponse
+        String s3BucketLocation = createS3Bucket(bucketRequest.getBucketName());
+        return CreateBucketResponse
                 .builder()
                 .bucketName(bucketRequest.getBucketName())
-                .location(bucket.location())
-                .status(BucketResponse.Status.CREATED)
+                .location(s3BucketLocation)
+                .status(BucketStatus.CREATED)
                 .build();
-
-        return bucketResponse;
     }
 
     @Override
     public List<String> getBuckets() {
-        ListBucketsResponse listBucketsResponse = s3Client.listBuckets();
-        return listBucketsResponse.buckets().stream()
-                .map(Bucket::name)
-                .collect(Collectors.toList());
+        return getBucketList();
     }
 
     @Override
-    public BucketResponse deleteBucket(@RequestBody BucketRequest bucketRequest) {
-        log.info("S3ServiceImpl :: deleteBucket :: bucketRequest :: {}", bucketRequest);
-        DeleteBucketResponse bucket = s3Client.deleteBucket(DeleteBucketRequest.builder()
-                .bucket(bucketRequest.getBucketName())
-                .build());
-        BucketResponse bucketResponse = BucketResponse
-                .builder()
-                .bucketName(bucketRequest.getBucketName())
-                .status(BucketResponse.Status.DELETED)
-                .build();
-        return bucketResponse;
+    public DeleteBucketResponse deleteBucket(@RequestBody DeleteBucketRequest deleteBucketRequest) {
+        log.info("S3ServiceImpl :: deleteBucket :: bucketRequest :: {}", deleteBucketRequest);
+        return deleteBucket(deleteBucketRequest.getBucketName()) ?
+                getDeleteBucketResponse(deleteBucketRequest.getBucketName(), BucketStatus.DELETED) :
+                getDeleteBucketResponse(deleteBucketRequest.getBucketName(), BucketStatus.NOT_DELETED);
 
+    }
+
+    private DeleteBucketResponse getDeleteBucketResponse(String bucketName, BucketStatus bucketStatus) {
+        return DeleteBucketResponse
+                .builder()
+                .bucketName(bucketName)
+                .status(bucketStatus)
+                .build();
     }
 
     @Override
     public FileResponse addFile(MultipartFile multipartFile, String bucketName) {
         log.info("S3ServiceImpl :: addFile :: bucketName :: {}", bucketName);
-        // Build the request
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(multipartFile.getOriginalFilename())
-                .contentType(multipartFile.getContentType())
-                .build();
-
         try {
-            // Upload the file using try-with-resources
-            try (InputStream inputStream = multipartFile.getInputStream()) {
-                s3Client.putObject(putObjectRequest, software.amazon.awssdk.core.sync.RequestBody.fromInputStream(inputStream, multipartFile.getSize()));
-            }
+            uploadS3Object(bucketName, multipartFile.getOriginalFilename(), multipartFile.getBytes(), multipartFile.getContentType());
+            return getFileResponse(bucketName, multipartFile.getOriginalFilename(), FileStatus.UPLOADED);
 
-            // Build the response
-            FileResponse fileResponse = FileResponse.builder()
-                    .bucketName(putObjectRequest.bucket())
-                    .fileName(putObjectRequest.key())
-                    .status(FileResponse.Status.CREATED)
-                    .build();
-            return fileResponse;
-        } catch (IOException e) {
-            throw new RuntimeException("Error uploading file to S3", e);
+        } catch (IOException ioException) {
+            log.error(ioException.getCause().getMessage());
+            return getFileResponse(bucketName, multipartFile.getOriginalFilename(), FileStatus.NOT_UPLOADED);
         }
+
     }
 
     @Override
     public List<String> viewFiles(FileRequest fileRequest) {
-        ListObjectsResponse listObjectsResponse = s3Client.listObjects(ListObjectsRequest.builder()
-                .bucket(fileRequest.bucketName)
-                .build());
-        return listObjectsResponse.contents().stream().map(S3Object::key).collect(Collectors.toList());
+        return getFiles(fileRequest.bucketName);
     }
 
     @Override
     public FileResponse deleteFile(DeleteFileRequest fileRequest) {
         log.info("S3ServiceImpl :: addFile :: fileRequest :: bucketName:: {} :: fileName :: {}", fileRequest.getBucketName(), fileRequest.getFileName());
-        DeleteObjectResponse deleteObjectResponse = s3Client.deleteObject(DeleteObjectRequest.builder()
-                .bucket(fileRequest.getBucketName())
-                .key(fileRequest.getFileName())
-                .build());
+        deleteObjectFromS3(fileRequest.getBucketName(), fileRequest.getFileName());
+        return getFileResponse(fileRequest.getBucketName(), fileRequest.getFileName(), FileStatus.DELETED);
+    }
+
+    private static FileResponse getFileResponse(String fileRequest, String fileRequest1, FileStatus deleted) {
         return FileResponse.builder()
-                .bucketName(fileRequest.getBucketName())
-                .fileName(fileRequest.getFileName())
-                .status(FileResponse.Status.DELETED)
+                .bucketName(fileRequest)
+                .fileName(fileRequest1)
+                .status(deleted)
                 .build();
     }
 }

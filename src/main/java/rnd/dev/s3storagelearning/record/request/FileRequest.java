@@ -1,4 +1,4 @@
-package rnd.dev.s3storagelearning.record.file;
+package rnd.dev.s3storagelearning.record.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,12 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FileResponse {
-    public String fileName;
+public class FileRequest {
     public String bucketName;
-    private Status status;
-
-    public enum Status {
-        CREATED, DELETED
-    }
 }

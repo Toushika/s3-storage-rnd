@@ -13,3 +13,16 @@ services:
     volumes:
       - "./localstack:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+
+  s3-local:
+    container_name: s3-local
+    image: abidjawad/s3-local
+    ports:
+      - "8040:8040"
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - REGION_NAME=us-east-1
+      - ENDPOINT_URL=http://localstack:4566
+    depends_on:
+      - localstack

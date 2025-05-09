@@ -1,4 +1,4 @@
-package rnd.dev.s3storagelearning.record.file;
+package rnd.dev.s3storagelearning.record.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FileRequest {
-    public String bucketName;
+public class DeleteFileRequest {
+    private String bucketName;
+    private String fileName;
 }
