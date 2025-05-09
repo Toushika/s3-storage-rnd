@@ -8,5 +8,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @ToString(callSuper = true)
-public class CreateBucketResponse extends BucketOperationResponse {
+public class DeleteBucketResponse extends BucketOperationResponse {
+
 }

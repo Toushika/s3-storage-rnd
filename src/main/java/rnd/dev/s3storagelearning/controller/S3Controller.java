@@ -5,9 +5,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import rnd.dev.s3storagelearning.record.file.DeleteFileRequest;
 import rnd.dev.s3storagelearning.record.file.FileRequest;
-import rnd.dev.s3storagelearning.record.file.FileResponse;
+import rnd.dev.s3storagelearning.record.response.FileResponse;
 import rnd.dev.s3storagelearning.record.request.CreateBucketRequest;
+import rnd.dev.s3storagelearning.record.request.DeleteBucketRequest;
 import rnd.dev.s3storagelearning.record.response.CreateBucketResponse;
+import rnd.dev.s3storagelearning.record.response.DeleteBucketResponse;
 import rnd.dev.s3storagelearning.service.S3Service;
 
 import java.util.List;
@@ -33,8 +35,8 @@ public class S3Controller {
     }
 
     @DeleteMapping("/delete/bucket")
-    public CreateBucketResponse deleteBucket(@RequestBody CreateBucketRequest bucketRequest) {
-        return s3Service.deleteBucket(bucketRequest);
+    public DeleteBucketResponse deleteBucket(@RequestBody DeleteBucketRequest deleteBucketRequest) {
+        return s3Service.deleteBucket(deleteBucketRequest);
     }
 
     @PostMapping("/add/file")

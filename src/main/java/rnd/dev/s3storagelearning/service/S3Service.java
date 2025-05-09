@@ -3,9 +3,11 @@ package rnd.dev.s3storagelearning.service;
 import org.springframework.web.multipart.MultipartFile;
 import rnd.dev.s3storagelearning.record.file.DeleteFileRequest;
 import rnd.dev.s3storagelearning.record.file.FileRequest;
-import rnd.dev.s3storagelearning.record.file.FileResponse;
+import rnd.dev.s3storagelearning.record.response.FileResponse;
 import rnd.dev.s3storagelearning.record.request.CreateBucketRequest;
+import rnd.dev.s3storagelearning.record.request.DeleteBucketRequest;
 import rnd.dev.s3storagelearning.record.response.CreateBucketResponse;
+import rnd.dev.s3storagelearning.record.response.DeleteBucketResponse;
 
 import java.util.List;
 
@@ -14,7 +16,7 @@ public interface S3Service {
 
     List<String> getBuckets();
 
-    CreateBucketResponse deleteBucket(CreateBucketRequest bucketRequest);
+    DeleteBucketResponse deleteBucket(DeleteBucketRequest deleteBucketRequest);
 
     FileResponse addFile(MultipartFile multipartFile, String bucketName);
 
