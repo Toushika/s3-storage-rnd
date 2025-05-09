@@ -3,11 +3,11 @@ package rnd.dev.s3storagelearning.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import rnd.dev.s3storagelearning.record.bucket.BucketRequest;
-import rnd.dev.s3storagelearning.record.bucket.BucketResponse;
 import rnd.dev.s3storagelearning.record.file.DeleteFileRequest;
 import rnd.dev.s3storagelearning.record.file.FileRequest;
 import rnd.dev.s3storagelearning.record.file.FileResponse;
+import rnd.dev.s3storagelearning.record.request.CreateBucketRequest;
+import rnd.dev.s3storagelearning.record.response.CreateBucketResponse;
 import rnd.dev.s3storagelearning.service.S3Service;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class S3Controller {
     }
 
     @PostMapping("/create/bucket")
-    public BucketResponse createBucket(@RequestBody BucketRequest bucketRequest) {
+    public CreateBucketResponse createBucket(@RequestBody CreateBucketRequest bucketRequest) {
         return s3Service.addBucket(bucketRequest);
     }
 
@@ -33,7 +33,7 @@ public class S3Controller {
     }
 
     @DeleteMapping("/delete/bucket")
-    public BucketResponse deleteBucket(@RequestBody BucketRequest bucketRequest) {
+    public CreateBucketResponse deleteBucket(@RequestBody CreateBucketRequest bucketRequest) {
         return s3Service.deleteBucket(bucketRequest);
     }
 

@@ -4,8 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
-import rnd.dev.s3storagelearning.record.bucket.BucketRequest;
-import rnd.dev.s3storagelearning.record.bucket.BucketResponse;
+import rnd.dev.s3storagelearning.constant.enums.BucketStatus;
 import rnd.dev.s3storagelearning.record.file.DeleteFileRequest;
 import rnd.dev.s3storagelearning.record.file.FileRequest;
 import rnd.dev.s3storagelearning.record.file.FileResponse;
@@ -27,16 +26,16 @@ public class S3ServiceImpl implements S3Service {
     }
 
     @Override
-    public BucketResponse addBucket(@RequestBody BucketRequest bucketRequest) {
+    public rnd.dev.s3storagelearning.record.response.CreateBucketResponse addBucket(@RequestBody rnd.dev.s3storagelearning.record.request.CreateBucketRequest bucketRequest) {
         log.info("S3ServiceImpl :: addBucket :: bucketRequest :: {}", bucketRequest);
         CreateBucketResponse bucket = s3Client.createBucket(CreateBucketRequest.builder()
                 .bucket(bucketRequest.getBucketName())
                 .build());
-        BucketResponse bucketResponse = BucketResponse
+        rnd.dev.s3storagelearning.record.response.CreateBucketResponse bucketResponse = rnd.dev.s3storagelearning.record.response.CreateBucketResponse
                 .builder()
                 .bucketName(bucketRequest.getBucketName())
                 .location(bucket.location())
-                .status(BucketResponse.Status.CREATED)
+                .status(BucketStatus.CREATED)
                 .build();
 
         return bucketResponse;
@@ -51,15 +50,15 @@ public class S3ServiceImpl implements S3Service {
     }
 
     @Override
-    public BucketResponse deleteBucket(@RequestBody BucketRequest bucketRequest) {
+    public rnd.dev.s3storagelearning.record.response.CreateBucketResponse deleteBucket(@RequestBody rnd.dev.s3storagelearning.record.request.CreateBucketRequest bucketRequest) {
         log.info("S3ServiceImpl :: deleteBucket :: bucketRequest :: {}", bucketRequest);
         DeleteBucketResponse bucket = s3Client.deleteBucket(DeleteBucketRequest.builder()
                 .bucket(bucketRequest.getBucketName())
                 .build());
-        BucketResponse bucketResponse = BucketResponse
+        rnd.dev.s3storagelearning.record.response.CreateBucketResponse bucketResponse = rnd.dev.s3storagelearning.record.response.CreateBucketResponse
                 .builder()
                 .bucketName(bucketRequest.getBucketName())
-                .status(BucketResponse.Status.DELETED)
+                .status(BucketStatus.DELETED)
                 .build();
         return bucketResponse;
 
