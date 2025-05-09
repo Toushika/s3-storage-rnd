@@ -3,7 +3,3 @@ spring:
     name: s3-storage-learning
 server:
   port: 8091
-aws:
-  region: us-east-1
-  s3:
-    endpoint: http://localhost:4566

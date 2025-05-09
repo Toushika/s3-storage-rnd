@@ -10,22 +10,16 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 import java.net.URI;
 
+import static rnd.dev.s3storagelearning.constant.CredentialConstant.*;
+
 @Configuration
 public class S3Config {
-    @Value("${aws.region}")
-    private String region;
-
-    @Value("${aws.s3.endpoint}")
-    private String endpoint;
 
     @Bean
     public S3Client getS3Client() {
         return S3Client.builder()
-                .endpointOverride(URI.create(endpoint))
-                .region(Region.of(region))
-                .credentialsProvider(StaticCredentialsProvider.create
-                        (AwsBasicCredentials.create("test", "test"))
-                )
+                .endpointOverride(URI.create(LOCAL_AWS_ENDPOINT))
+                .region(Region.US_EAST_1)
                 .forcePathStyle(true) // Add this line
                 .build();
     }
