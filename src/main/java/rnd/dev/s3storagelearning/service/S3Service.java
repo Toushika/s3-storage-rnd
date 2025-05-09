@@ -1,8 +1,9 @@
 package rnd.dev.s3storagelearning.service;
 
 import org.springframework.web.multipart.MultipartFile;
-import rnd.dev.s3storagelearning.record.file.DeleteFileRequest;
-import rnd.dev.s3storagelearning.record.file.FileRequest;
+
+import rnd.dev.s3storagelearning.record.request.DeleteFileRequest;
+import rnd.dev.s3storagelearning.record.request.FileRequest;
 import rnd.dev.s3storagelearning.record.response.FileResponse;
 import rnd.dev.s3storagelearning.record.request.CreateBucketRequest;
 import rnd.dev.s3storagelearning.record.request.DeleteBucketRequest;

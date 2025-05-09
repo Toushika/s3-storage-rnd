@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 import rnd.dev.s3storagelearning.constant.enums.BucketStatus;
 import rnd.dev.s3storagelearning.constant.enums.FileStatus;
-import rnd.dev.s3storagelearning.record.file.DeleteFileRequest;
-import rnd.dev.s3storagelearning.record.file.FileRequest;
 import rnd.dev.s3storagelearning.record.request.CreateBucketRequest;
 import rnd.dev.s3storagelearning.record.request.DeleteBucketRequest;
+import rnd.dev.s3storagelearning.record.request.DeleteFileRequest;
+import rnd.dev.s3storagelearning.record.request.FileRequest;
 import rnd.dev.s3storagelearning.record.response.CreateBucketResponse;
 import rnd.dev.s3storagelearning.record.response.DeleteBucketResponse;
 import rnd.dev.s3storagelearning.record.response.FileResponse;
@@ -21,11 +21,9 @@ import java.util.List;
 @Slf4j
 @Service
 public class S3ServiceImpl extends AbstractS3Service implements S3Service {
-    private final S3Client s3Client;
 
     public S3ServiceImpl(S3Client s3Client) {
         super(s3Client);
-        this.s3Client = s3Client;
     }
 
     @Override
@@ -51,7 +49,6 @@ public class S3ServiceImpl extends AbstractS3Service implements S3Service {
         return deleteBucket(deleteBucketRequest.getBucketName()) ?
                 getDeleteBucketResponse(deleteBucketRequest.getBucketName(), BucketStatus.DELETED) :
                 getDeleteBucketResponse(deleteBucketRequest.getBucketName(), BucketStatus.NOT_DELETED);
-
 
     }
 

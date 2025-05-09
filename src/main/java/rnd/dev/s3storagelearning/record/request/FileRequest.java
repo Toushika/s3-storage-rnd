@@ -1,4 +1,4 @@
-package rnd.dev.s3storagelearning.record.file;
+package rnd.dev.s3storagelearning.record.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
